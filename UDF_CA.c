@@ -1,6 +1,6 @@
 
-/* See https://arxiv.org/abs/1608.02856 for details on the correlations 
- * 
+/* See https://arxiv.org/abs/1608.02856 for details on correlations 
+ * Amirsaman Farrokhpanah
  * The following gives a general idea on how the dynamic contact angle can be implemented
  * in the UDF. It needs to be modified to match your problem.
  * Disclaimer: Use at your own risk.
