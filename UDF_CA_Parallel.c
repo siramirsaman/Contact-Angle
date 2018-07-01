@@ -10,9 +10,8 @@
 /* Global Variables:
 * used to pass information between the two functions below
 */
-double theta_e_radian= (60.0*M_PI/180.0); /* static angle */
-double dynamic_contact_angle=60.0; /*dynamic angle: initial value */
-double contact_line_velocity=0; /* capilary velocity */
+double dynamic_contact_angle = 60.0; /*dynamic angle: initial value */
+double contact_line_velocity = 0; /* capilary velocity */
 FILE *file; /* output file, defined here for ease of use */
 /* ....
 * define other variables as needed
@@ -31,11 +30,13 @@ DEFINE_ADJUST(Contact_Angle_Update, domain)
 
 
 	/* calculate capilary velocity here.
-	Read the paper above to get an idea.
-	it needs to be the velocity of the moving contact point
-	not the velocity of fluid:
-	contact_line_velocity = (current_position_of_triple_point - last_known_position_of_triple_point) / (the_time_between_these_two_measurements)
-	updating it every timestep will cause accuracy issues, need to jump every couple of time steps (using N_TIME)
+	   Read the paper above to get an idea.
+	   it needs to be the velocity of the moving contact point
+	   not the velocity of fluid:
+	   
+	   contact_line_velocity = (current_position_of_triple_point - last_known_position_of_triple_point) / (the_time_between_these_two_measurements)
+	
+	   updating it every timestep will cause accuracy issues, need to jump every couple of time steps (using N_TIME)
 	*/
 	if (DESIRED_INTERVALS_BETWEEN_TWO_MEASUREMENTS)
 	{
@@ -52,30 +53,20 @@ DEFINE_ADJUST(Contact_Angle_Update, domain)
 		end_c_loop_all (cell,pt[1])
 
 
-		#if RP_NODE     //in parallel mode, sums up the variables here
+		#if RP_NODE     //in parallel mode, sums up the variables here, so values from parallel chuncks are added together
 			integer_1 = PRF_GISUM1(integer_1); /* example parallel sum methods */
 			array_1[0] = PRF_GRSUM1(array_1[0]);  /* example parallel sum methods */
 			float_1 = PRF_GRSUM1(float_1);  /* example parallel sum methods */
 		#endif
 
 		/* update here:
-		contact_velocity and dynamic_contact_angle
-
-		Ca = contact_velocity*0.001003/0.0728;
-		temp= 0.5-0.5 * cos(theta_e_radian);
-		temp= 0.5 * log( (1.0+temp)/(1.0-temp) );//atanh(0.5-0.5 * cos(theta_e_radian))
-		f_Hoff_inverse = -(9.78546 * pow(temp,1.416430594900850))/(12.819*pow(temp,1.41643)-100.0);
-		x_hoff= Ca +  f_Hoff_inverse ;
-		if(contact_velocity>=0)
-		dynamic_contact_angle= acos(1-2*tanh(5.16*pow((x_hoff/(1+1.31*pow(x_hoff,.99))),0.706))) *180.0/M_PI  ;
-		else
-		dynamic_contact_angle= 2*theta_e_radian*180.0/M_PI -acos( 1-2*tanh(5.16*pow((x_hoff/(1+1.31*pow(x_hoff,.99))),0.706)   ) ) *180.0/M_PI  ;
+			contact_velocity and dynamic_contact_angle
 		*/
 
 		if(I_AM_NODE_ZERO_P) /* in parallel */
 		{
 			if(DO_SOME_SAFETY_CHECKS_HERE)
-			dynamic_contact_angle=118;
+			dynamic_contact_angle=60;
 
 			file = fopen("output.txt", "a+"); /* write to file for debug purposes */
 			fprintf(file, "Time=%f ontact_velocity=%f dynamic_contact_angle=%f \n", CURRENT_TIME, contact_velocity, dynamic_contact_angle);
