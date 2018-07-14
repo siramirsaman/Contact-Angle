@@ -18,7 +18,7 @@ FILE *file; /* output file, defined here for ease of use */
 */
 
 /* This routine calculates the value of contact angle on each time step.
-* It is hooked to "Adjust Functions" in Fleunt
+* It is hooked in the "Adjust Functions" option in Fleunt
 */
 DEFINE_ADJUST(Contact_Angle_Update, domain)
 {
